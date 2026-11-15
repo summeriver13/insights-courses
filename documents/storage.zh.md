@@ -41,8 +41,8 @@ export STORAGE_PROVIDER=s3
 export STORAGE_ACCESS_KEY_ID="..."
 export STORAGE_SECRET_ACCESS_KEY="..."
 export STORAGE_REGION="ap-southeast-1"
-export STORAGE_PUBLIC_BUCKET="edu-tech-public"
-export STORAGE_PRIVATE_BUCKET="edu-tech-private"
+export STORAGE_PUBLIC_BUCKET="insights-courses-public"
+export STORAGE_PRIVATE_BUCKET="insights-courses-private"
 ```
 
 Cloudflare R2：
@@ -54,8 +54,8 @@ export STORAGE_SECRET_ACCESS_KEY="..."
 export STORAGE_REGION="auto"
 export STORAGE_ENDPOINT="https://<account>.r2.cloudflarestorage.com"
 export STORAGE_PATH_STYLE="true"
-export STORAGE_PUBLIC_BUCKET="edu-tech-public"
-export STORAGE_PRIVATE_BUCKET="edu-tech-private"
+export STORAGE_PUBLIC_BUCKET="insights-courses-public"
+export STORAGE_PRIVATE_BUCKET="insights-courses-private"
 export STORAGE_PUBLIC_HOST="https://pub-<hash>.r2.dev"
 ```
 
@@ -68,16 +68,16 @@ export STORAGE_SECRET_ACCESS_KEY="minioadmin"
 export STORAGE_REGION="us-east-1"
 export STORAGE_ENDPOINT="http://127.0.0.1:9000"
 export STORAGE_PATH_STYLE="true"
-export STORAGE_PUBLIC_BUCKET="edu-tech-public"
-export STORAGE_PRIVATE_BUCKET="edu-tech-private"
+export STORAGE_PUBLIC_BUCKET="insights-courses-public"
+export STORAGE_PRIVATE_BUCKET="insights-courses-private"
 ```
 
 MinIO 建桶与匿名读：
 
 ```bash
 mc alias set local http://127.0.0.1:9000 minioadmin minioadmin
-mc mb local/edu-tech-public local/edu-tech-private
-mc anonymous set download local/edu-tech-public
+mc mb local/insights-courses-public local/insights-courses-private
+mc anonymous set download local/insights-courses-public
 ```
 
 ## 切换与回退

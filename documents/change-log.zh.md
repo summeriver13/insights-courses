@@ -49,4 +49,10 @@ rails new edu-tech -c bootstrap -j esbuild
 - Public pages use `Cache-Control: max-age=0, public, s-maxage=300`; browsers revalidate with `ETag` on every request
 - Keep `CDN-Cache-Control` and `s-maxage` for a future shared cache
 
+## 2026/11/15 project rename
+
+- GitHub repository `edu-tech` -> `insights-courses`
+- Product name `Edu-Tech` -> `Insights Courses`
+- Update default database and storage bucket examples to the new name; the historical `rails new edu-tech` command stays unchanged
+
 

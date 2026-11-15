@@ -13,8 +13,8 @@
 
 ```bash
 BUNDLE_WITH=postgres bundle install
-export DATABASE_URL=postgres://user:password@host:5432/edu_tech_production
-export QUEUE_DATABASE_URL=postgres://user:password@host:5432/edu_tech_queue  # 可选
+export DATABASE_URL=postgres://user:password@host:5432/insights_courses_production
+export QUEUE_DATABASE_URL=postgres://user:password@host:5432/insights_courses_queue  # 可选
 bin/rails db:prepare
 ```
 

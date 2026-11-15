@@ -1,4 +1,6 @@
-# eud-tech
+# Insights Courses
+
+A personal course site for the courses I teach and the courses I study.
 
 [Rails](https://rubyonrails.org),
 [Bootstrap](https://getbootstrap.com),
