@@ -25,6 +25,16 @@ class CoursesControllerTest < ActionDispatch::IntegrationTest
     assert_select "p", text: "没有匹配的课程。"
   end
 
+  test "treats percent as a literal in course search" do
+    courses(:one).update!(description: "100% Ruby")
+
+    get courses_url(q: "%")
+
+    assert_response :success
+    assert_select "h3", text: courses(:one).title
+    assert_select "h3", text: courses(:two).title, count: 0
+  end
+
   test "should paginate the course list" do
     10.times do |index|
       Course.create!(title: "Extra #{index}", description: "Extra course", course_number: "EX-#{index}")

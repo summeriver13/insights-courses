@@ -103,6 +103,6 @@ bin/jobs
 
 | 项目 | 现状 |
 |---|---|
-| 全文搜索 | 只做 `LIKE` 前缀包含匹配 |
+| 全文索引 | 搜索使用 `LOWER(...) LIKE LOWER(:pattern)` 子串匹配；未建 FTS5/tsvector 索引 |
 | 缓存组件 | 未引入 Solid Cache。预渲染后片段缓存收益很小 |
 | CDN 自动清除 | 课程同步后靠 TTL 过期；未接 CDN purge API |

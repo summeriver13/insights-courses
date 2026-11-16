@@ -24,7 +24,7 @@
 
 匿名响应不设置 `Set-Cookie`。测试已断言。
 
-公共页不渲染 `csrf_meta_tags`，课程搜索表单为 GET 且不带 token。否则 Rails 会写会话 Cookie，CDN 不缓存该响应。
+公共页不渲染 `csrf_meta_tags`，课程列表搜索与课程页内搜索都是 GET 且不带 token。否则 Rails 会写会话 Cookie，CDN 不缓存该响应。
 
 ## 为什么不用 nginx
 

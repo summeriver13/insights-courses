@@ -29,7 +29,7 @@ class Course < ApplicationRecord
     next all if query.blank?
 
     pattern = "%#{sanitize_sql_like(query)}%"
-    where("LOWER(title) LIKE LOWER(:pattern) OR LOWER(course_number) LIKE LOWER(:pattern) OR LOWER(description) LIKE LOWER(:pattern)", pattern: pattern)
+    where("LOWER(title) LIKE LOWER(:pattern) ESCAPE '\\' OR LOWER(course_number) LIKE LOWER(:pattern) ESCAPE '\\' OR LOWER(description) LIKE LOWER(:pattern) ESCAPE '\\'", pattern: pattern)
   }
 
   def zone

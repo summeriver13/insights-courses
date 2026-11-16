@@ -33,6 +33,12 @@ bin/rails server
 - [storage.zh.md](./documents/storage.zh.md)
 - [cdn.zh.md](./documents/cdn.zh.md)
 
+## search
+
+- 全站搜索课程、课时、资源、评估与活动；课程管理者还可搜索题库题目
+- 课程页可把搜索范围限制到当前课程
+- 使用 `LOWER(...) LIKE LOWER(:pattern)`，同时兼容 SQLite 与 PostgreSQL；未建全文索引
+
 ## storage
 
 - 默认本地文件存储（CarrierWave `storage :file`），文件写入 `public/uploads/`，不入库

@@ -49,6 +49,12 @@ rails new edu-tech -c bootstrap -j esbuild
 - Public pages use `Cache-Control: max-age=0, public, s-maxage=300`; browsers revalidate with `ETag` on every request
 - Keep `CDN-Cache-Control` and `s-maxage` for a future shared cache
 
+## 2026/11/15 search
+
+- Add global search for courses, lessons, resources, assessments and activities
+- Course managers can also search question stems; answers and explanations are not shown
+- Search uses `LOWER(...) LIKE LOWER(:pattern)` on SQLite and PostgreSQL; no full-text index yet
+
 ## 2026/11/15 project rename
 
 - GitHub repository `edu-tech` -> `insights-courses`

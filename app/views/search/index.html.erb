@@ -1,0 +1,140 @@
+<%= render "layouts/header" %>
+
+<div class="container">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+    <h1 class="h3 mb-0">搜索</h1>
+    <% if @course %>
+      <span class="small text-body-secondary">
+        范围：<%= link_to @course.title, course_path(@course) %>
+        <%= link_to "全站搜索", search_path(q: @query.presence), class: "ms-2" %>
+      </span>
+    <% end %>
+  </div>
+
+  <% placeholder = logged_in? ? "搜索课程、课时、资源、评估、题目" : "搜索课程、课时、资源、评估" %>
+  <%= form_with url: search_path, method: :get, authenticity_token: false, class: "row g-2 mb-4" do |form| %>
+    <% if @course %>
+      <%= hidden_field_tag :course_id, @course.id %>
+    <% end %>
+    <div class="col">
+      <%= form.search_field :q, value: @query, placeholder: placeholder, class: "form-control", autofocus: true %>
+    </div>
+    <div class="col-auto">
+      <%= form.submit "搜索", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+
+  <% if @query.blank? %>
+    <p class="text-body-secondary">输入关键词开始搜索。</p>
+  <% elsif @results.empty? %>
+    <p class="text-body-secondary">没有匹配“<%= @query %>”的内容。</p>
+  <% else %>
+    <% if @results.to_h.values.any? { |group| group.total > group.items.size } %>
+      <p class="small text-body-secondary">每组最多显示 <%= GlobalSearch::LIMIT %> 条；缩小关键词可看到更精确的结果。</p>
+    <% end %>
+
+    <% if @results.courses.total.positive? %>
+      <h2 class="h5 mt-4">课程 <span class="badge text-bg-secondary"><%= @results.courses.total %></span></h2>
+      <div class="list-group mb-4">
+        <% @results.courses.items.each do |course| %>
+          <%= link_to course_path(course), class: "list-group-item list-group-item-action" do %>
+            <div class="d-flex flex-wrap justify-content-between gap-2">
+              <strong><%= course.title %></strong>
+              <span class="badge text-bg-light"><%= course.course_number %></span>
+            </div>
+            <div class="small text-body-secondary"><%= truncate(strip_tags(course.description.to_s), length: 140) %></div>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if @results.lessons.total.positive? %>
+      <h2 class="h5 mt-4">课时 <span class="badge text-bg-secondary"><%= @results.lessons.total %></span></h2>
+      <div class="list-group mb-4">
+        <% @results.lessons.items.each do |lesson| %>
+          <%= link_to course_lesson_path(lesson.course, lesson), class: "list-group-item list-group-item-action" do %>
+            <div class="d-flex flex-wrap justify-content-between gap-2">
+              <strong><%= lesson.title %></strong>
+              <span class="small text-body-secondary"><%= lesson.course.title %> · 第 <%= lesson.position %> 课</span>
+            </div>
+            <div class="small text-body-secondary"><%= truncate(strip_tags(lesson.body.to_s).squish, length: 160) %></div>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if @results.resources.total.positive? %>
+      <h2 class="h5 mt-4">资源 <span class="badge text-bg-secondary"><%= @results.resources.total %></span></h2>
+      <div class="list-group mb-4">
+        <% @results.resources.items.each do |resource| %>
+          <%= link_to course_resource_path(resource.course, resource), class: "list-group-item list-group-item-action" do %>
+            <div class="d-flex flex-wrap justify-content-between gap-2">
+              <strong><%= resource.name %></strong>
+              <span class="small text-body-secondary"><%= resource.course.title %> · <%= resource.resource_type %></span>
+            </div>
+            <div class="small text-body-secondary"><%= truncate(resource.description.to_s.squish, length: 140) %></div>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if @results.assessments.total.positive? %>
+      <h2 class="h5 mt-4">评估 <span class="badge text-bg-secondary"><%= @results.assessments.total %></span></h2>
+      <div class="list-group mb-4">
+        <% @results.assessments.items.each do |assessment| %>
+          <%= link_to course_assessment_path(assessment.course, assessment), class: "list-group-item list-group-item-action" do %>
+            <div class="d-flex flex-wrap justify-content-between gap-2">
+              <strong><%= assessment.title %></strong>
+              <span class="small text-body-secondary">
+                <%= assessment.course.title %> · <%= Assessment::KIND_LABELS.fetch(assessment.kind, assessment.kind) %>
+              </span>
+            </div>
+            <div class="small text-body-secondary"><%= truncate(assessment.description.to_s.squish, length: 140) %></div>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if @results.activities.total.positive? %>
+      <h2 class="h5 mt-4">活动 <span class="badge text-bg-secondary"><%= @results.activities.total %></span></h2>
+      <div class="list-group mb-4">
+        <% @results.activities.items.each do |activity| %>
+          <%= link_to course_activity_path(activity.course, activity), class: "list-group-item list-group-item-action" do %>
+            <div class="d-flex flex-wrap justify-content-between gap-2">
+              <strong><%= activity.activity_type %></strong>
+              <span class="small text-body-secondary">
+                <%= activity.course.title %>
+                <% start_time = activity.course.local_time(activity.start_time) %>
+                <% if start_time %> · <%= start_time.strftime("%Y-%m-%d %H:%M") %><% end %>
+                <% if activity.location.present? %> · <%= activity.location %><% end %>
+              </span>
+            </div>
+            <div class="small text-body-secondary"><%= truncate(activity.description.to_s.squish, length: 140) %></div>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <% if @results.questions.total.positive? %>
+      <h2 class="h5 mt-4">
+        题目 <span class="badge text-bg-secondary"><%= @results.questions.total %></span>
+        <span class="small text-body-secondary fw-normal">仅课程管理者可见</span>
+      </h2>
+      <div class="list-group mb-4">
+        <% @results.questions.items.each do |question| %>
+          <%= link_to course_questions_path(question.course), class: "list-group-item list-group-item-action" do %>
+            <div class="d-flex flex-wrap justify-content-between gap-2">
+              <strong><%= question.stem %></strong>
+              <span class="badge text-bg-light"><%= question.kind %></span>
+            </div>
+            <div class="small text-body-secondary">
+              <%= question.course.title %>
+              <% if question.topic.present? %> · <%= question.topic %><% end %>
+              <% if question.lesson %> · <%= question.lesson.title %><% end %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+</div>
