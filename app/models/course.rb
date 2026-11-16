@@ -62,7 +62,9 @@ class Course < ApplicationRecord
   end
 
   def enroll(user)
-    course_memberships.find_or_create_by(user: user) { |membership| membership.role = "student" }
+    course_memberships.find_or_create_by(user: user) do |membership|
+      membership.role = CourseMembership::STUDENT_ROLE
+    end
   end
 
   def certificate_ready?(user)

@@ -1,6 +1,7 @@
 class CourseMembership < ApplicationRecord
   ROLES = %w[ teacher assistant student maintainer ].freeze
   MANAGE_ROLES = %w[ teacher assistant maintainer ].freeze
+  STUDENT_ROLE = "student"
 
   belongs_to :course
   belongs_to :user

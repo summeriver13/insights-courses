@@ -1,0 +1,161 @@
+<div class="container">
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+    <div>
+      <h1 class="h3 mb-1">我的学习</h1>
+      <p class="text-body-secondary mb-0"><%= current_user.name %>，这是你的课程概览。</p>
+    </div>
+    <div class="d-flex gap-2">
+      <%= link_to "浏览课程", courses_path, class: "btn btn-outline-secondary" %>
+      <% if admin? %>
+        <%= link_to "新建课程", new_course_path, class: "btn btn-primary" %>
+      <% end %>
+    </div>
+  </div>
+
+  <% if dashboard.summaries.any? %>
+    <div class="row row-cols-2 row-cols-lg-4 g-3 mb-4">
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body py-3">
+            <div class="small text-body-secondary">学习课程</div>
+            <div class="fs-4 fw-semibold"><%= dashboard.summaries.size %></div>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body py-3">
+            <div class="small text-body-secondary">未完成课时</div>
+            <div class="fs-4 fw-semibold"><%= dashboard.incomplete_lessons_count %></div>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body py-3">
+            <div class="small text-body-secondary">待交任务</div>
+            <div class="fs-4 fw-semibold"><%= dashboard.pending_deadlines_count %></div>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card h-100">
+          <div class="card-body py-3">
+            <div class="small text-body-secondary">错题</div>
+            <div class="fs-4 fw-semibold"><%= dashboard.mistakes_count %></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="h4 mb-3">接下来</h2>
+    <% if dashboard.deadlines.any? %>
+      <div class="list-group mb-4">
+        <% dashboard.deadlines.each do |deadline| %>
+          <%= link_to course_assessment_path(deadline.course, deadline.assessment), class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center gap-3" do %>
+            <div>
+              <div class="fw-semibold"><%= deadline.title %></div>
+              <div class="small text-body-secondary">
+                <%= deadline.course.title %>
+                · <%= [ week_label(deadline.course, deadline.due_at), deadline.course.local_time(deadline.due_at).strftime("%Y-%m-%d %H:%M") ].compact.join(" ") %>
+              </div>
+            </div>
+            <div class="d-flex flex-wrap justify-content-end gap-1">
+              <% if deadline.overdue? %>
+                <span class="badge text-bg-danger">已逾期</span>
+              <% end %>
+              <% if deadline.group_missing? %>
+                <span class="badge text-bg-warning">未组队</span>
+              <% end %>
+              <% unless deadline.overdue? %>
+                <% if deadline.days_until.zero? %>
+                  <span class="badge text-bg-warning">今天截止</span>
+                <% else %>
+                  <span class="badge text-bg-light"><%= deadline.days_until %> 天后</span>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+      <% if dashboard.pending_deadlines_count > dashboard.deadlines.size %>
+        <p class="small text-body-secondary mb-4">还有 <%= dashboard.pending_deadlines_count - dashboard.deadlines.size %> 项未显示。</p>
+      <% end %>
+    <% else %>
+      <p class="text-body-secondary mb-4">没有待提交的截止任务。</p>
+    <% end %>
+
+    <h2 class="h4 mb-3">我的课程</h2>
+    <div class="row row-cols-1 row-cols-lg-2 g-3 mb-5">
+      <% dashboard.summaries.each do |summary| %>
+        <div class="col">
+          <div class="card h-100">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start gap-2">
+                <div>
+                  <h3 class="h5 mb-1"><%= link_to summary.course.title, course_path(summary.course), class: "text-decoration-none" %></h3>
+                  <div class="small text-body-secondary"><%= summary.course.course_number %></div>
+                </div>
+                <% if summary.grade %>
+                  <span class="badge <%= %w[TF F].include?(summary.letter) ? "text-bg-danger" : "text-bg-secondary" %>">
+                    <%= summary.complete? ? summary.letter : "进行中" %>
+                  </span>
+                <% end %>
+              </div>
+
+              <div class="mt-3">
+                <div class="small text-body-secondary mb-1">课时 <%= summary.done_lessons %> / <%= summary.total_lessons %></div>
+                <div class="progress mb-2" style="height: 6px;" role="progressbar" aria-valuenow="<%= summary.progress_percent %>" aria-valuemin="0" aria-valuemax="100">
+                  <div class="progress-bar" style="width: <%= summary.progress_percent %>%"></div>
+                </div>
+                <% if summary.next_lesson %>
+                  <div class="small">下一课：<%= link_to summary.next_lesson.title, course_lesson_path(summary.course, summary.next_lesson) %></div>
+                <% elsif summary.total_lessons.positive? %>
+                  <div class="small text-success">课时已全部完成。</div>
+                <% else %>
+                  <div class="small text-body-secondary">暂无课时。</div>
+                <% end %>
+              </div>
+
+              <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-3 pt-3 border-top">
+                <div class="small">
+                  <% if summary.grade %>
+                    当前成绩 <strong><%= number_with_precision(summary.grade, precision: 1) %></strong>
+                    <% if summary.complete? %>
+                      <span class="text-body-secondary">· <%= summary.letter %></span>
+                    <% end %>
+                  <% else %>
+                    <span class="text-body-secondary">暂无成绩</span>
+                  <% end %>
+                  <% if summary.assessment_count.positive? %>
+                    <span class="text-body-secondary">· 已出 <%= summary.graded_count %> / <%= summary.assessment_count %> 项</span>
+                  <% end %>
+                </div>
+                <div class="d-flex gap-2">
+                  <%= link_to "错题 #{summary.mistakes}", course_practice_mistakes_path(summary.course), class: "small link-secondary text-decoration-none" %>
+                  <%= link_to "成绩", course_grades_path(summary.course), class: "small link-secondary text-decoration-none" %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="alert alert-light border">
+      你还没有加入学习的课程。<%= link_to "浏览课程", courses_path, class: "alert-link" %>，或联系课程管理员。
+    </div>
+  <% end %>
+
+  <% if dashboard.teaching_courses.any? %>
+    <h2 class="h4 mb-3">我管理的课程</h2>
+    <div class="list-group mb-4">
+      <% dashboard.teaching_courses.each do |course| %>
+        <%= link_to course_path(course), class: "list-group-item list-group-item-action d-flex justify-content-between align-items-center" do %>
+          <span><%= course.title %> <span class="badge text-bg-light ms-1"><%= course.course_number %></span></span>
+          <span class="small text-body-secondary">管理</span>
+        <% end %>
+      <% end %>
+    </div>
+  <% end %>
+</div>

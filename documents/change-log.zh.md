@@ -61,4 +61,9 @@ rails new edu-tech -c bootstrap -j esbuild
 - Product name `Edu-Tech` -> `Insights Courses`
 - Update default database and storage bucket examples to the new name; the historical `rails new edu-tech` command stays unchanged
 
+## 2026/11/16 home dashboard
+
+- Add a logged-in home dashboard for learning courses: lesson progress, current grades, mistake counts and unsubmitted deadlines
+- Show managed courses separately; anonymous visitors keep the public landing page
+
 

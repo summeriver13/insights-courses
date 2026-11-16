@@ -39,6 +39,12 @@ bin/rails server
 - 课程页可把搜索范围限制到当前课程
 - 使用 `LOWER(...) LIKE LOWER(:pattern)`，同时兼容 SQLite 与 PostgreSQL；未建全文索引
 
+## home
+
+- Anonymous visitors see the public landing page
+- Logged-in students see their learning dashboard: lesson progress, unsubmitted deadlines, current grades and mistake counts
+- Users with management roles see a separate list of courses they manage
+
 ## storage
 
 - 默认本地文件存储（CarrierWave `storage :file`），文件写入 `public/uploads/`，不入库
